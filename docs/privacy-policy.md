@@ -1,6 +1,6 @@
 # Privacy Policy – Misstery Files Uploader
 
-_Last updated: 2026-11-19_
+_Last updated: 2026-11-19_ · [Home](README.md) · [Terms of Service](terms-of-service.md)
 
 **Misstery Files Uploader** is an internal tool operated by the owner of the YouTube channel
 [Misstery Files (@missteryfiles)](https://www.youtube.com/@missteryfiles). It is used only by the
