@@ -2,7 +2,7 @@
 
 An internal publishing tool for the YouTube channel **[Misstery Files (@missteryfiles)](https://www.youtube.com/@missteryfiles)**.
 
-<img src="https://www.youtube.com/s/desktop/28b0985e/img/logos/favicon_144x144.png" width="32" alt="YouTube"> **This tool uses YouTube API Services.**
+<img src="youtube_icon.png" width="40" alt="YouTube"> **This tool uses YouTube API Services.**
 
 ## What it does
 - Uploads the channel owner's own Shorts to the channel and schedules their publish time (YouTube Data API `videos.insert`)
