@@ -38,10 +38,14 @@ def main():
     now = datetime.datetime.now(datetime.timezone.utc)
     due = [q for q in queue if q.get("comment") and
            datetime.datetime.fromisoformat(q["publish_at"]) <= now <= datetime.datetime.fromisoformat(q["publish_at"]) + datetime.timedelta(days=3)]
-    if not due:
+    manual = os.environ.get("GITHUB_EVENT_NAME") == "workflow_dispatch"
+    if not due and not manual:
         print("nothing due"); return
     tok = token()
-    me = call(tok, "GET", f"{API}/channels?part=id&mine=true")["items"][0]["id"]
+    ch = call(tok, "GET", f"{API}/channels?part=id,snippet&mine=true")["items"][0]
+    me = ch["id"]; print("signed in as", ch["snippet"]["title"])
+    if not due:
+        print("keys OK, nothing due"); return
     ids = ",".join(q["video_id"] for q in due)
     status = {x["id"]: x["status"]["privacyStatus"] for x in call(tok, "GET", f"{API}/videos?part=status&id={ids}")["items"]}
     failed = 0
