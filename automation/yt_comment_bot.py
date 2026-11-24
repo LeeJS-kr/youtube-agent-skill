@@ -19,8 +19,9 @@ QUEUE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "comment_queue.
 def token():
     env = {k: os.environ.get(k, "").strip().strip('"').strip("'") for k in ("YT_CLIENT_ID", "YT_CLIENT_SECRET", "YT_REFRESH_TOKEN")}
     for k, v in env.items():
+        if v.startswith(k + "="): env[k] = v = v[len(k) + 1:].strip().strip('"').strip("'")   # pasted as NAME=value
         if not v: sys.exit(f"secret {k} is empty")
-    print("client id ends with", env["YT_CLIENT_ID"][-27:], "| secret length", len(env["YT_CLIENT_SECRET"]),
+    print("client id length", len(env["YT_CLIENT_ID"]), "| secret length", len(env["YT_CLIENT_SECRET"]),
           "| refresh token length", len(env["YT_REFRESH_TOKEN"]))
     body = urllib.parse.urlencode({
         "client_id": env["YT_CLIENT_ID"], "client_secret": env["YT_CLIENT_SECRET"],
