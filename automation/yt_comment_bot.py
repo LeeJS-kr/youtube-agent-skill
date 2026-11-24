@@ -17,10 +17,18 @@ QUEUE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "comment_queue.
 
 
 def token():
+    env = {k: os.environ.get(k, "").strip().strip('"').strip("'") for k in ("YT_CLIENT_ID", "YT_CLIENT_SECRET", "YT_REFRESH_TOKEN")}
+    for k, v in env.items():
+        if not v: sys.exit(f"secret {k} is empty")
+    print("client id ends with", env["YT_CLIENT_ID"][-27:], "| secret length", len(env["YT_CLIENT_SECRET"]),
+          "| refresh token length", len(env["YT_REFRESH_TOKEN"]))
     body = urllib.parse.urlencode({
-        "client_id": os.environ["YT_CLIENT_ID"], "client_secret": os.environ["YT_CLIENT_SECRET"],
-        "refresh_token": os.environ["YT_REFRESH_TOKEN"], "grant_type": "refresh_token"}).encode()
-    return json.load(urllib.request.urlopen("https://oauth2.googleapis.com/token", body, timeout=30))["access_token"]
+        "client_id": env["YT_CLIENT_ID"], "client_secret": env["YT_CLIENT_SECRET"],
+        "refresh_token": env["YT_REFRESH_TOKEN"], "grant_type": "refresh_token"}).encode()
+    try:
+        return json.load(urllib.request.urlopen("https://oauth2.googleapis.com/token", body, timeout=30))["access_token"]
+    except urllib.error.HTTPError as e:
+        sys.exit(f"token refresh failed HTTP {e.code}: {e.read().decode()[:300]}")
 
 
 def call(tok, method, url, body=None):
