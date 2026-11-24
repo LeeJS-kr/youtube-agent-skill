@@ -17,10 +17,19 @@ QUEUE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "comment_queue.
 
 
 def token():
+    env = {k: os.environ.get(k, "").strip().strip('"').strip("'") for k in ("YT_CLIENT_ID", "YT_CLIENT_SECRET", "YT_REFRESH_TOKEN")}
+    for k, v in env.items():
+        if v.startswith(k + "="): env[k] = v = v[len(k) + 1:].strip().strip('"').strip("'")   # pasted as NAME=value
+        if not v: sys.exit(f"secret {k} is empty")
+    print("client id length", len(env["YT_CLIENT_ID"]), "| secret length", len(env["YT_CLIENT_SECRET"]),
+          "| refresh token length", len(env["YT_REFRESH_TOKEN"]))
     body = urllib.parse.urlencode({
-        "client_id": os.environ["YT_CLIENT_ID"], "client_secret": os.environ["YT_CLIENT_SECRET"],
-        "refresh_token": os.environ["YT_REFRESH_TOKEN"], "grant_type": "refresh_token"}).encode()
-    return json.load(urllib.request.urlopen("https://oauth2.googleapis.com/token", body, timeout=30))["access_token"]
+        "client_id": env["YT_CLIENT_ID"], "client_secret": env["YT_CLIENT_SECRET"],
+        "refresh_token": env["YT_REFRESH_TOKEN"], "grant_type": "refresh_token"}).encode()
+    try:
+        return json.load(urllib.request.urlopen("https://oauth2.googleapis.com/token", body, timeout=30))["access_token"]
+    except urllib.error.HTTPError as e:
+        sys.exit(f"token refresh failed HTTP {e.code}: {e.read().decode()[:300]}")
 
 
 def call(tok, method, url, body=None):
@@ -38,10 +47,14 @@ def main():
     now = datetime.datetime.now(datetime.timezone.utc)
     due = [q for q in queue if q.get("comment") and
            datetime.datetime.fromisoformat(q["publish_at"]) <= now <= datetime.datetime.fromisoformat(q["publish_at"]) + datetime.timedelta(days=3)]
-    if not due:
+    manual = os.environ.get("GITHUB_EVENT_NAME") == "workflow_dispatch"
+    if not due and not manual:
         print("nothing due"); return
     tok = token()
-    me = call(tok, "GET", f"{API}/channels?part=id&mine=true")["items"][0]["id"]
+    ch = call(tok, "GET", f"{API}/channels?part=id,snippet&mine=true")["items"][0]
+    me = ch["id"]; print("signed in as", ch["snippet"]["title"])
+    if not due:
+        print("keys OK, nothing due"); return
     ids = ",".join(q["video_id"] for q in due)
     status = {x["id"]: x["status"]["privacyStatus"] for x in call(tok, "GET", f"{API}/videos?part=status&id={ids}")["items"]}
     failed = 0
