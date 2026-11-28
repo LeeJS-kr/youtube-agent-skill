@@ -189,7 +189,8 @@ def map3d():
         ck.sphere((0, 0, 5.2), 1.3, m=ck.mat("pinm", RED, emit=0.4), parent=p)
         f0 = 30 + i * 40
         key(p, "location", [(f0, (x, y, 14)), (f0 + 14, (x, y, 0))])
-        ck.trail(f"ln{i}", [(0, 0), (x * 0.5, 0) if i == 0 else (0, y * 0.5), (x, y)], width=0.25, grow=(f0 + 30, f0 + 80))
+        route = [(0, 0), (0, 4.5), (-22.5, 4.5), (x, y)] if i == 0 else [(0, 0), (4.5, 0), (4.5, -22.5), (x, y)]
+        ck.trail(f"ln{i}", route, width=0.35, z=0.3, grow=(f0 + 30, f0 + 80))  # 골목(블록 사이)으로만 지나감
     cam, tgt = ck.camera(lens=32)
     cam_path(cam, tgt, [(1, (0, -60, 70)), (210, (6, -48, 58))], [(1, (0, 0, 0)), (210, (-2, -2, 0))])
     return s
