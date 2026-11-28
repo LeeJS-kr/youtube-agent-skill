@@ -6,7 +6,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 BL = sys.argv[1]
 SCENES = sys.argv[2:] or ["op_alley", "op_route", "op_window", "map", "banjiha_stairs", "shoe_cabinet", "shoe_off",
                           "section", "section_clinic", "b2_stairs"]
-SAMPLES = int(os.environ.get("SJ_SAMPLES", "128"))
+SAMPLES = int(os.environ.get("SJ_SAMPLES", "96"))
 OUT = os.path.join(HERE, "out"); os.makedirs(OUT, exist_ok=True)
 ENC = os.path.join(HERE, "encode_seq.py")
 for sc in SCENES:

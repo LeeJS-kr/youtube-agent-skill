@@ -33,15 +33,21 @@ def setup(frames, night=False):
         pr = bpy.context.preferences.addons["cycles"].preferences
         for t in ("OPTIX", "CUDA"):
             try:
-                pr.compute_device_type = t; pr.get_devices()
+                pr.compute_device_type = t
+                (pr.refresh_devices if hasattr(pr, "refresh_devices") else pr.get_devices)()
                 if any(d.type == t for d in pr.devices):
                     for d in pr.devices: d.use = d.type == t
                     break
-            except Exception: pass
+            except Exception as e: print("gpu setup", t, e)
         s.cycles.device = "GPU"
+        print("CYCLES DEVICES:", pr.compute_device_type, [(d.name, d.type, d.use) for d in pr.devices], flush=True)
+        try: s.cycles.denoiser = "OPTIX"
+        except Exception: pass
     if a.engine == "CYCLES":
-        s.cycles.max_bounces = 6
+        s.cycles.max_bounces = 5
         s.cycles.use_denoising = True
+        s.cycles.use_adaptive_sampling = True; s.cycles.adaptive_threshold = 0.03
+        s.cycles.use_light_tree = True
     s.render.film_transparent = False
     if night:
         nt = s.world.node_tree
