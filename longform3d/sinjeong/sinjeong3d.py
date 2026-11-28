@@ -84,12 +84,15 @@ def lamp_post(x, y, h=4.2, energy=180):
 
 
 def sack(loc, rot=0, ln=1.5):
-    o = ck.sphere(loc, 0.5, m=ck.mat("sack", YELLOW, rough=0.85), scale=(ln / 1.0, 0.42, 0.26))
+    o = ck.sphere(loc, 0.5, m=ck.mat("sack", YELLOW, rough=0.85), scale=(ln / 1.0, 0.62, 0.42))
     o.rotation_euler = (0, 0, rot)
-    for t in (-0.3, 0.3):  # 노끈 두 줄
-        r = ck.cyl((loc[0] + t * ln * math.cos(rot), loc[1] + t * ln * math.sin(rot), loc[2]), 0.235, 0.05,
-                   m=ck.mat("twine", (0.45, 0.4, 0.32, 1)), rot=(0, math.pi / 2, rot))
-        r.scale = (1, 1.85, 1)
+    for t in (-0.3, 0.3):  # 노끈 두 줄: 포대 표면을 감는 얇은 고리 (2026-11-28: 원판처럼 잘라 보이던 문제 수정)
+        cx, cy = loc[0] + t * ln * math.cos(rot), loc[1] + t * ln * math.sin(rot)
+        bpy.ops.mesh.primitive_torus_add(major_radius=1.0, minor_radius=0.03, location=(cx, cy, loc[2]), rotation=(0, math.pi / 2, rot))
+        r = bpy.context.object
+        r.rotation_euler = (0, math.pi / 2, rot)
+        r.scale = (0.165, 0.25, 1.0)  # 링 반지름 = 포대 단면(높이 0.21, 폭 0.31)
+        r.data.materials.append(ck.mat("twine", (0.45, 0.4, 0.32, 1)))
     return o
 
 
@@ -121,9 +124,9 @@ def op_alley():
     lamp_post(3.5, 1.7, energy=260)
     lamp_post(-14, -1.7, energy=120)
     for x, y in ((-1.2, 1.55), (-2.4, 1.6), (0.6, 1.62)):   # 쓰레기 봉투 (흰 클레이)
-        ck.sphere((x, y, 0.3), 0.36, scale=(1, 0.9, 0.85))
-    sack((-0.9, 1.15, 0.16), 0.15)
-    sack((0.5, 1.05, 0.16), -0.1, 1.3)
+        ck.sphere((x, y, 0.26), 0.3, scale=(1, 0.9, 0.85))
+    sack((-1.0, 1.0, 0.2), 0.55, 1.7)
+    sack((0.9, 0.95, 0.2), 0.35, 1.5)
     cam, tgt = ck.camera(lens=35)
     cam_path(cam, tgt, [(1, (-14, -0.6, 1.6)), (210, (-5.5, -0.3, 1.25))], [(1, (0, 0.9, 0.4)), (210, (-0.2, 1.1, 0.25))])
     return s
