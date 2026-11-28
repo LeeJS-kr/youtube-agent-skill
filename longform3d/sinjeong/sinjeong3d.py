@@ -23,6 +23,7 @@ W, H = map(int, a.res.split("x"))
 YELLOW = (0.78, 0.62, 0.30, 1)    # 누런 포대
 BLUE = (0.25, 0.48, 0.85, 1)      # 병원 층 / 역
 WARM = (1.0, 0.72, 0.38, 1)
+PURPLE = (0.45, 0.22, 0.62, 1)   # 지하철 5호선 색 (신정역)
 RED = ck.ACCENT
 
 
@@ -139,19 +140,21 @@ def op_route():
     ck.road(-40, 40, -4, 4); r2 = ck.box((0, 0, 0.012), (8, 80, 0.045), ck.GROUND, bevel=0)
     for yy in list(range(-38, -5, 4)) + list(range(6, 39, 4)): ck.box((0, yy, 0.04), (0.16, 1.6, 0.02), bevel=0)
     for i in range(6): ck.box((-5.2 + i * 0.0, -3 + i * 1.2, 0.045), (1.6, 0.6, 0.02), bevel=0)  # 횡단보도
-    ck.box((-14, -7.5, 0.6), (3.2, 2.2, 1.2), m=ck.mat("stn", BLUE, rough=0.4), bevel=0.15)   # 역 출구 지붕
+    ck.box((-14, -7.5, 1.3), (4.0, 2.8, 0.3), m=ck.mat("stn", PURPLE, rough=0.4, emit=0.4), bevel=0.1)   # 역 출구 지붕
+    for dx in (-1.8, 1.8): ck.box((-14 + dx, -7.5, 0.6), (0.2, 2.6, 1.2), m=ck.mat("stn", PURPLE, rough=0.4, emit=0.4), bevel=0.05)
     ck.box((-14, -7.5, 0.05), (2.6, 1.8, 0.1), ck.GROUND, bevel=0)
-    for x, y, w, d, h in [(-18, -16, 12, 10, 9), (-26, 12, 12, 10, 14), (-12, 13, 10, 9, 8), (16, -14, 12, 12, 11), (30, -13, 10, 10, 7)]:
+    for x, y, w, d, h in [(-30, -18, 10, 8, 6), (-26, 12, 12, 10, 14), (-12, 13, 10, 9, 8), (16, -14, 12, 12, 11), (30, -13, 10, 10, 7)]:
         ck.building(x, y, w, d, h)
     ck.building(13, 12, 11, 10, 16)                                    # 그 빌딩
+    ck.box((13, 12 - 5.05, 6.6), (11.2, 0.12, 2.6), m=ck.mat("clinic", BLUE, emit=0.6), bevel=0.02)  # 병원 층 (파랑, 단면 장면과 같은 색)
     for x in (-30, -22, 22, 32):
         ck.tree(x, 5.6, 0.8); ck.tree(x, -5.6, 0.8)
     pts = [(-14, -6.2), (-8, -5.2), (-5, -5.2), (-5, 5.2), (8.5, 5.2), (11, 6.8)]
     ck.trail("route", pts, grow=(20, 150))
-    fig = ck.figure("w", 1.6, color=(0.95, 0.95, 0.95, 1))
+    fig = ck.figure("w", 2.2, color=ck.ACCENT)
     ck.walk(fig, [(20, pts[0]), (55, pts[1]), (68, pts[2]), (105, pts[3]), (140, pts[4]), (150, pts[5])], 1, 180)
     cam, tgt = ck.camera(lens=30)
-    cam_path(cam, tgt, [(1, (-34, -34, 26)), (180, (-20, -36, 22))], [(1, (-6, -2, 0)), (180, (4, 5, 3))])
+    cam_path(cam, tgt, [(1, (-10, -46, 34)), (180, (-4, -38, 27))], [(1, (-2, 1, 0)), (180, (1, 3, 1))])
     return s
 
 
@@ -178,7 +181,7 @@ def map3d():
             x, y = gx * 9, gy * 9
             if abs(gx) <= 0 and abs(gy) <= 0: continue
             ck.box((x, y, 0.4 + rnd.random() * 0.8), (7.2, 7.2, 0.8 + rnd.random() * 1.6), bevel=0.15)
-    ck.cyl((0, 0, 0.6), 3.0, 1.2, m=ck.mat("stn", BLUE, rough=0.4, emit=0.3))
+    ck.cyl((0, 0, 0.6), 3.0, 1.2, m=ck.mat("stn", PURPLE, rough=0.4, emit=0.3))
     pins = [(-22.5, 13.5), (18, -22.5)]
     for i, (x, y) in enumerate(pins):
         p = ck.empty(f"pin{i}", (x, y, 0))
