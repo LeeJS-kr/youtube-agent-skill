@@ -310,14 +310,15 @@ def section(clinic=False):
     b2 = ck.box((0, 0, zs[-2] + 1.45), (13.4, 9.4, 2.7), m=ck.mat("b2", RED, emit=0.35), bevel=0.05)
     cl = ck.box((0, 0, zs[2] + 0.06), (13.4, 9.4, 0.1), m=ck.mat("clinic", BLUE, emit=0.0), bevel=0.02)
     clm = cl.data.materials[0].node_tree.nodes["Principled BSDF"]
+    clm.inputs["Emission Color"].default_value = BLUE  # emit=0 으로 만들면 기본 발광색이 흰색이라 지정
     if not clinic:
         b2.scale = (1, 1, 0.02); b2.keyframe_insert("scale", frame=40); b2.scale = (1, 1, 1); b2.keyframe_insert("scale", frame=95)
         cl.scale = (1, 1, 0.02); cl.keyframe_insert("scale", frame=170); cl.scale = (1, 1, 1); cl.keyframe_insert("scale", frame=200)
-        e = clm.inputs["Emission Strength"]; e.default_value = 0; e.keyframe_insert("default_value", frame=170); e.default_value = 1.5; e.keyframe_insert("default_value", frame=215)
+        e = clm.inputs["Emission Strength"]; e.default_value = 0; e.keyframe_insert("default_value", frame=170); e.default_value = 1.0; e.keyframe_insert("default_value", frame=215)
         cam, tgt = ck.camera(lens=28)
         cam_path(cam, tgt, [(1, (-16, -40, 4)), (n, (8, -38, 7))], [(1, (0, 0, 1.5)), (n, (0, 0, 2.5))])
     else:
-        clm.inputs["Emission Strength"].default_value = 1.5
+        clm.inputs["Emission Strength"].default_value = 1.0
         b2.hide_render = True
         fig = ck.figure("v", 1.6, color=(0.95, 0.95, 0.95, 1))
         pts = [(-26, -3.6), (-9, -3.6), (-6.2, -3.6), (-3.5, -2.0)]
