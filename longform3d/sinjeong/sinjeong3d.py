@@ -250,14 +250,15 @@ def banjiha_stairs():
     s = setup(210)
     _villa_section()
     fig = ck.figure("v", 1.6, color=(0.95, 0.95, 0.95, 1))
-    pts = [(-6.0, 0.5), (-3.0, -2.5), (0.6, -4.0), (0.6, -3.5), (0.6, 2.4), (2.6, 2.6)]
+    pts = [(-6.0, 0.5), (-3.0, -2.5), (0.6, -4.0), (0.6, -3.5), (0.6, 2.4), (2.4, 1.0)]
     ck.walk(fig, [(25, pts[0]), (60, pts[1]), (85, pts[2]), (92, pts[3]), (170, pts[4]), (195, pts[5])], 1, 210, run=True)
     zk = [(1, -1.6), (92, -1.6), (170, 1.43), (210, 1.43)]
     for f in range(1, 211):
         z = ck._interp([(fr, (v, 0)) for fr, v in zk], f).x
         fig["root"].location.z = z; fig["root"].keyframe_insert("location", index=2, frame=f)
-    cam, tgt = ck.camera(lens=28)
-    cam_path(cam, tgt, [(1, (-4, -22, 4.5)), (210, (1, -20, 5.5))], [(1, (-2.5, 0, -0.3)), (210, (1, 0, 0.6))])
+    cam, tgt = ck.camera(lens=30)
+    cam_path(cam, tgt, [(1, (-5, -13, 1.2)), (100, (-1.5, -12, 1.4)), (210, (1.5, -11.5, 3.2))],
+             [(1, (-4.5, 0, -1.0)), (100, (0.3, -1, -0.6)), (210, (1.2, 1, 1.4))])  # 사람을 따라가며 가까이
     return s
 
 
